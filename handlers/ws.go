@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"go-chat/room"
 	"net/http"
 
@@ -25,8 +24,6 @@ func WebSocketHandler(manager *room.Manager) http.HandlerFunc {
 
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
-			fmt.Println("WebSocket upgrade failed:", err)
-			http.Error(w, "Cannot upgrade to WebSocket", http.StatusInternalServerError)
 			return
 		}
 

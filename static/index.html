@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 	<meta charset="UTF-8">
-	<title>Go Chat Demo</title>
+	<title>Go Chat</title>
 	<style>
 		body {
 			font-family: Arial, sans-serif;
@@ -71,7 +71,8 @@
 				return;
 			}
 
-            ws = new WebSocket(`wss://go-chat-rooms.onrender.com/ws?nick=${nick}&token=${token}`);
+			ws = new WebSocket(`ws://localhost:8080/ws?nick=${nick}&token=${token}`);
+
 			ws.onmessage = (event) => {
 				addMessage(event.data);
 			};
