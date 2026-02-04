@@ -23,7 +23,7 @@ func generateToken() string {
 	return hex.EncodeToString(b)
 }
 
-func (m *Manager) CreaetRoom() *Room {
+func (m *Manager) CreateRoom() *Room {
 	m.Mutex.Lock()
 	defer m.Mutex.Unlock()
 

@@ -12,7 +12,7 @@ type CreateRoomResponse struct {
 
 func CreateRoomHandler(manager *room.Manager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		room := manager.CreaetRoom()
+		room := manager.CreateRoom()
 
 		json.NewEncoder(w).Encode(CreateRoomResponse{
 			Token: room.Token,
