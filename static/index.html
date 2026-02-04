@@ -71,8 +71,7 @@
 				return;
 			}
 
-			ws = new WebSocket(`ws://localhost:8080/ws?nick=${nick}&token=${token}`);
-
+            ws = new WebSocket(`wss://go-chat-rooms.onrender.com/ws?nick=${nick}&token=${token}`);
 			ws.onmessage = (event) => {
 				addMessage(event.data);
 			};
