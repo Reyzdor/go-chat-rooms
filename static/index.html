@@ -49,7 +49,11 @@
       return;
     }
 
-    ws = new WebSocket(`ws://localhost:8080/ws?nick=${nick}&token=${token}`);
+    const loc = window.location;
+    const protocol = loc.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${loc.host}/ws?nick=${encodeURIComponent(nick)}&token=${encodeURIComponent(token)}`;
+
+    ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
       document.getElementById('form').style.display = 'none';
@@ -64,19 +68,26 @@
     ws.onclose = () => {
       addMessage('The connection was closed');
     };
+
+    ws.onerror = (err) => {
+      console.error('WebSocket error:', err);
+      alert('WebSocket error. Check console.');
+    };
   }
 
   function sendMessage() {
     const input = document.getElementById('message');
-    const text = input.value;
+    const text = input.value.trim();
 
     if (!ws || ws.readyState !== WebSocket.OPEN) {
       alert('No connection');
       return;
     }
 
-    ws.send(text);
-    input.value = '';
+    if (text !== '') {
+      ws.send(text);
+      input.value = '';
+    }
   }
 
   function addMessage(text) {
