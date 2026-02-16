@@ -28,77 +28,7 @@
   </div>
 </div>
 
-<script>
-  let ws = null;
-
-  function createRoom() {
-    fetch('/create')
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById('token').value = data.token;
-        alert('The room has been created. Token: ' + data.token);
-      });
-  }
-
-  function joinRoom() {
-    const nick = document.getElementById('nick').value;
-    const token = document.getElementById('token').value;
-
-    if (!nick || !token) {
-      alert('Enter your nickname and token');
-      return;
-    }
-
-    const loc = window.location;
-    const protocol = loc.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${loc.host}/ws?nick=${encodeURIComponent(nick)}&token=${encodeURIComponent(token)}`;
-
-    ws = new WebSocket(wsUrl);
-
-    ws.onopen = () => {
-      document.getElementById('form').style.display = 'none';
-      document.getElementById('chat').classList.add('active');
-      addMessage('You have connected to the room');
-    };
-
-    ws.onmessage = (event) => {
-      addMessage(event.data);
-    };
-
-    ws.onclose = () => {
-      addMessage('The connection was closed');
-    };
-
-    ws.onerror = (err) => {
-      console.error('WebSocket error:', err);
-      alert('WebSocket error. Check console.');
-    };
-  }
-
-  function sendMessage() {
-    const input = document.getElementById('message');
-    const text = input.value.trim();
-
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
-      alert('No connection');
-      return;
-    }
-
-    if (text !== '') {
-      ws.send(text);
-      input.value = '';
-    }
-  }
-
-  function addMessage(text) {
-    const chat = document.getElementById('messages');
-    const div = document.createElement('div');
-    div.className = 'message';
-    div.textContent = text;
-    chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
-  }
-</script>
+<script src="./script.js"></script>
 
 </body>
 </html>
