@@ -62,10 +62,12 @@ client := &room.Client{
     Nick: nick,
     Conn: conn,
 }
+rm.Mutex.Lock()
 rm.Clients[client] = true
+rm.Mutex.Unlock()
 ```
 
-The client is added to the room map. The ```map[*Client]bool``` map is used as an array to quickly add and remove participants.
+The ```map[*Client]bool``` is used as a set to quickly add and remove participants.
 
 ## Message Broadcasting
 
@@ -73,8 +75,18 @@ When a message arrives from a client:
 
 ```go
 _, msg, err := conn.ReadMessage()
+			
 fullMessage := client.Nick + ": " + string(msg)
+
+rm.Mutex.Lock()
+
+clients := make([]*room.Client, 0, len(rm.Clients))
 for c := range rm.Clients {
+    clients = append(clients, c)
+}
+rm.Mutex.Unlock()
+
+for _, c := range clients {
     c.Conn.WriteMessage(websocket.TextMessage, []byte(fullMessage))
 }
 ```
@@ -85,7 +97,9 @@ The server runs through all clients in the room map and sends a message to each 
 
 ```go
 defer func() {
-    delete(rm.Clients, client)
+    rm.Mutex.Lock()
+    delete(rm.Clients, client) 
+    rm.Mutex.Unlock()
     conn.Close()
 }()
 ```
