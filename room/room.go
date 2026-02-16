@@ -1,6 +1,10 @@
 package room
 
-import "github.com/gorilla/websocket"
+import (
+	"sync"
+
+	"github.com/gorilla/websocket"
+)
 
 type Client struct {
 	Nick string
@@ -10,4 +14,5 @@ type Client struct {
 type Room struct {
 	Token   string
 	Clients map[*Client]bool
+	Mutex   sync.Mutex
 }
