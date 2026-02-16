@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"go-chat/room"
+	"go-chat/go-chat/room"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -18,7 +18,7 @@ func WebSocketHandler(manager *room.Manager) http.HandlerFunc {
 
 		rm := manager.GetRoom(token)
 		if rm == nil {
-			http.Error(w, "Комната не найдена!", http.StatusNotFound)
+			http.Error(w, "Комната не найдена", http.StatusNotFound)
 			return
 		}
 
@@ -32,10 +32,14 @@ func WebSocketHandler(manager *room.Manager) http.HandlerFunc {
 			Conn: conn,
 		}
 
+		rm.Mutex.Lock()
 		rm.Clients[client] = true
+		rm.Mutex.Unlock()
 
 		defer func() {
+			rm.Mutex.Lock()
 			delete(rm.Clients, client)
+			rm.Mutex.Unlock()
 			conn.Close()
 		}()
 
@@ -47,7 +51,15 @@ func WebSocketHandler(manager *room.Manager) http.HandlerFunc {
 
 			fullMessage := client.Nick + ": " + string(msg)
 
+			rm.Mutex.Lock()
+
+			clients := make([]*room.Client, 0, len(rm.Clients))
 			for c := range rm.Clients {
+				clients = append(clients, c)
+			}
+			rm.Mutex.Unlock()
+
+			for _, c := range clients {
 				c.Conn.WriteMessage(websocket.TextMessage, []byte(fullMessage))
 			}
 		}
