@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"go-chat/go-chat/room"
+	"go-chat/room"
 	"net/http"
 
 	"github.com/gorilla/websocket"
